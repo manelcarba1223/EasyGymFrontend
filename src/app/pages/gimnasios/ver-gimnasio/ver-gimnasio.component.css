@@ -1,0 +1,45 @@
+.container {
+  font-family: Arial, sans-serif;
+}
+
+.horas-disponibles {
+  margin-top: 20px;
+}
+
+.actividades {
+  margin-top: 20px;
+}
+
+.actividad {
+  margin-bottom: 20px;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+.actividad p {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.actividad ul {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.actividad ul li {
+  font-size: 14px;
+  color: #666;
+}
+
+.not-registered {
+  margin-top: 20px;
+  background-color: #ffe6e6;
+  color: #cc0000;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+}

@@ -1,0 +1,39 @@
+<body>
+
+    <app-navbar></app-navbar>
+    
+    <div class="container">
+    
+        <!-- Sección de usuario -->
+        <div class="user-section">
+            <h1 class="section-title">Perfil de Usuario</h1>
+            <div class="user-details">
+                <p class="user-info"><strong>Username:</strong> <span>{{ username }}</span></p>
+                <p class="user-info"><strong>Correo electrónico:</strong> <span>{{ user.email }}</span></p>
+                <p class="user-info"><strong>Nombre:</strong> <span>{{ user.name }}</span></p>
+                <p class="user-info"><strong>Apellido:</strong> <span>{{ user.lastname }}</span></p>
+                <p class="user-info"><strong>Teléfono:</strong> <span>{{ user.phone }}</span></p>
+                <p class="user-info"><strong>Edad:</strong> <span>{{ getAge() }} años</span></p>
+            </div>
+        </div>
+        <div class="no-gyms-message" *ngIf="gimnasios.length > 0">
+            <p>Selecciona un gimnasio </p>
+        </div>
+        <div *ngFor="let gym of gimnasios" class="gym-item" (click)="handleDoubleClick(gym.id_gimnasio)">
+            <div class="gym-header">
+                <h3 class="gym-name">{{ gym.nombre }}</h3>
+                <p class="gym-location">Ubicación: {{ gym.ciudad }}</p>
+            </div>
+            <div class="gym-details">
+                <p class="gym-info"><strong>Descripción:</strong> {{ gym.descripcion }}</p>
+            </div>
+        </div>
+    
+        <!-- Mensaje si el usuario no tiene gimnasios -->
+        <div class="no-gyms-message" *ngIf="gimnasios.length <= 0">
+            <p>Aún no te has registrado en ningún gimnasio.</p>
+        </div>
+    
+    </div>
+    
+    </body>

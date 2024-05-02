@@ -1,0 +1,26 @@
+<div class="container">
+  <h2>{{titulo}}</h2>
+  <form [formGroup]="gimnasioForm" (ngSubmit)="formSubmit()" enctype="multipart/form-data">    
+    <div class="form-group">
+      <label for="nombre">Nombre:</label>
+      <input type="text" class="form-control" formControlName="nombre" id="nombre" placeholder="Nombre del gimnasio">
+    </div>
+    <div class="form-group">
+      <label for="ciudad">Ciudad:</label>
+      <input type="text" class="form-control" formControlName="ciudad" id="ciudad" placeholder="Ciudad del gimnasio">
+    </div>
+    <div class="form-group">
+      <label for="descripcion">Descripción:</label>
+      <textarea class="form-control" formControlName="descripcion" id="descripcion" placeholder="Descripción del gimnasio"></textarea>
+    </div>
+    <!-- Agregar etiqueta label para el campo de carga de logo -->
+    <div class="form-group">
+      <label for="logo">Logo:</label>
+      <input type="file" (change)="onFileSelected($event)" class="form-control" formControlName="logo" id="logo">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Confirmar</button>
+    <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+
+  </form>
+</div>

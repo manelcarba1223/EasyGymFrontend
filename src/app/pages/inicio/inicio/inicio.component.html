@@ -1,0 +1,54 @@
+<app-navbar></app-navbar>
+<div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <section *ngIf="rol=='ROLE_ADMIN'" class="welcome-section admin">
+          <div class="welcome-content">
+            <h1>¡Bienvenido a EasyGym!</h1>
+            <p class="welcome-message">¡Hola <span class="username">{{user.username}}</span>!</p>
+            <p>¡Estamos emocionados de tenerte aquí!</p>
+            <p>Como administrador, tienes acceso a todas las funciones avanzadas de EasyGym.</p>
+            <p>¡Comienza a gestionar tus gimnasios y usuarios ahora mismo!</p>
+          </div>
+        </section>
+
+        <section *ngIf="rol=='ROLE_USER'" class="welcome-section user">
+          <div class="welcome-content">
+            <h1>¡Bienvenido a EasyGym!</h1>
+            <p class="welcome-message">¡Hola <span class="username">{{user.username}}</span>!</p>
+            <p>¡Es un placer tenerte aquí!</p>
+            <p>Con EasyGym, podrás acceder a todos los gimnasios de nuestra web y ver todas sus rutinas con información detallada acerca de sus ejercicios</p>
+            <p>¡Empieza a entrenar y alcanza tus objetivos!</p>
+          </div>
+        </section>
+
+        <section *ngIf="rol=='ROLE_ENTRENADOR'" class="welcome-section trainer">
+          <div class="welcome-content">
+            <h1>¡Bienvenido a EasyGym!</h1>
+            <p class="welcome-message">¡Hola <span class="username">{{user.username}}</span>!</p>
+            <p>¡Estamos encantados de tenerte aquí!</p>
+            <p>Con EasyGym, podrás registrar tu gimnasio y crear rutinas personalizadas para ayudar a tus clientes</p>
+            <p>¡Comienza a guiar y motivar a tus clientes hacia un estilo de vida más saludable!</p>
+          </div>
+        </section>
+
+        <section *ngIf="!user" class="welcome-section not-registered">
+          <div class="welcome-content">
+              <h1>¡Bienvenido a EasyGym!</h1>
+              <p class="welcome-message">¡Hola!</p>
+              <p>Parece que aún no estás registrado en EasyGym.</p>
+              <p>Por favor, regístrate para poder disfrutar de todas las funciones disponibles.</p>
+          </div>
+      </section>
+
+      <section class="app-info-section">
+        <div class="app-info-content">
+            <h2>¿Qué es EasyGym?</h2>
+            <p>EasyGym es una aplicación web diseñada para gestionar gimnasios, usuarios y rutinas de entrenamiento.</p>
+            <p>Ofrecemos a nuestros usuarios la posibilidad de acceder a información detallada sobre gimnasios y sus rutinas, así como la capacidad de registrar sus propios gimnasios y crear rutinas personalizadas.</p>
+            <p>Con EasyGym, puedes llevar un control completo de tu actividad física y alcanzar tus objetivos de fitness de manera efectiva.</p>
+        </div>
+    </section>
+      </div>
+    </div>
+  </div>

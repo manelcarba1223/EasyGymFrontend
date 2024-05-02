@@ -1,0 +1,23 @@
+<form [formGroup]="formulario" (submit)="submitForm()">
+    <label>
+      Nombre:
+      <input type="text" formControlName="nombre">
+    </label><br>
+    <label>
+      Descripción:
+      <input type="text" formControlName="descripcion">
+    </label><br>
+    <label>
+      Músculo principal:
+      <input type="text" formControlName="musculoPrincipal">
+    </label><br>
+    <div formArrayName="musculoSecundario">
+      <label *ngFor="let musculo of musculoSecundario.controls; let i = index;">
+        Músculo secundario {{ i + 1 }}:
+        <input type="text" [formControlName]="i">
+        <button type="button" (click)="eliminarMusculoSecundario(i)">Eliminar</button>
+      </label><br>
+    </div>
+    <button type="button" (click)="agregarMusculoSecundario()">Agregar músculo secundario</button><br>
+    <button type="submit" [disabled]="!formulario.valid">Enviar</button>
+  </form>

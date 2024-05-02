@@ -1,0 +1,29 @@
+.custom-toolbar {
+  background-color: #1976d2; /* Color de fondo azul */
+  color: white; /* Color del texto blanco */
+  display: flex; /* Utiliza flexbox para alinear los elementos */
+  align-items: center; /* Centra verticalmente los elementos */
+  padding: 0 20px; /* Añade un poco más de espacio alrededor de los elementos */
+}
+
+.logo {
+  width: 40px; /* Tamaño del logo */
+  height: auto; /* Altura automática para mantener la proporción */
+  margin-right: 10px; /* Espaciado a la derecha */
+}
+
+.title {
+  font-size: 1.5rem; /* Tamaño del título */
+}
+
+.custom-button {
+  color: white; /* Color del texto blanco */
+  background-color: #4caf50; /* Color de fondo verde */
+  border-radius: 5px; /* Bordes redondeados */
+  padding: 8px 16px; /* Espaciado interno */
+  margin: 50px;
+}
+
+.custom-button:last-child {
+  margin-left: auto; /* Empuja el botón "Volver" a la derecha */
+}

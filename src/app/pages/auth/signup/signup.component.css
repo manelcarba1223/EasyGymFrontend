@@ -1,0 +1,100 @@
+.background-image {
+  background-image: url('/assets/_f915992f-78b5-4b76-9da1-cbe5981269ca.jpeg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  padding: 20px;
+  height: 100vh;
+  display: flex;
+  justify-content: center; /* Centrar horizontalmente */
+  align-items: center; /* Centrar verticalmente */
+}
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 0 auto 20px auto; /* Centra la imagen horizontalmente y agrega margen inferior */
+  display: flex;
+  justify-content: center; /* Centrar horizontalmente */
+  align-items: center; /* Centrar verticalmente */
+}
+
+
+
+.bienvenida {
+  text-align: center;
+  font-size: 24px;
+  margin-top: 10px;
+  color: #1623df;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.card {
+  width: 400px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+form {
+  padding: 20px;
+}
+mat-form-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+input.mat-input-element {
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+.mt-3 a {
+  color: #007bff;
+}
+
+.mt-3 a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+.card-img-top {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+
+.card {
+  width: 400px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+  padding: 30px;
+}
+
+.example-container {
+  padding: 20px;
+}

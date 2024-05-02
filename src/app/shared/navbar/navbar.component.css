@@ -1,0 +1,63 @@
+.logo-image {
+  width: 50px;
+  /* Ajusta el ancho según sea necesario */
+  height: auto;
+  /* Esto mantiene la relación de aspecto */
+}
+
+.custom-toolbar {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  background-color: #2E7D32;
+  flex-wrap: wrap;
+  /* Permite que los elementos se envuelvan cuando no caben en una sola línea */
+}
+
+.derecha {
+  margin-left: auto;
+  text-decoration: none;
+  color: white;
+}
+
+.derecha:hover {
+  color: #333;
+  /* Cambia el color al pasar el ratón sobre los enlaces */
+}
+
+.logo-link {
+  margin-right: 20px;
+  /* Ajusta el margen entre el logo y los otros elementos */
+}
+
+.nav-link {
+  margin-left: 20px;
+  /* Ajusta el margen entre los enlaces */
+  text-decoration: none;
+  color: white;
+}
+
+.nav-link:hover {
+  color: #333;
+  /* Cambia el color al pasar el ratón sobre los enlaces */
+}
+
+@media screen and (max-width: 582px) {
+
+  .logo-link,
+  .derecha,
+  .nav-link {
+    margin: 10px 0;
+    /* Reducir los márgenes en pantallas más pequeñas */
+    margin-left: 0%;
+    color: black;
+
+  }
+
+  .logo-image {
+    width: 0px;
+    /* Ajusta el ancho según sea necesario */
+    height: 0px;
+    /* Esto mantiene la relación de aspecto */
+  }
+}

@@ -1,0 +1,13 @@
+<div class="calendar-container">
+  <full-calendar [options]="calendarOptions"></full-calendar>
+</div>
+
+<div *ngIf="!actividades || actividades.length === 0">
+  <p>No hay actividades disponibles.</p>
+</div>
+
+<div *ngIf="showConfirmationDialog">
+  <p>¿Quieres borrar la actividad?</p>
+  <button (click)="confirmBorrarRutina(actividadId)">Sí</button>
+  <button (click)="cancelarBorrarRutina()">No</button>
+</div>

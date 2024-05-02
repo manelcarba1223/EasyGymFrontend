@@ -1,0 +1,12 @@
+<h2>Añadir Horas Disponibles</h2>
+<form [formGroup]="horasDisponiblesForm" (ngSubmit)="agregarHoras()" #horaForm="ngForm">
+  <div>
+    <label for="horaInicio">Hora de inicio:</label>
+    <input type="datetime-local" id="horaInicio" name="horaInicio" formControlName="horaInicio"  required>
+  </div>
+  <div>
+    <label for="horaFin">Hora de fin:</label>
+    <input type="datetime-local" id="horaFinal" name="horaFinal" formControlName="horaFinal" required>
+  </div>
+  <button type="submit" [disabled]="!horaForm.valid">Agregar</button>
+</form>

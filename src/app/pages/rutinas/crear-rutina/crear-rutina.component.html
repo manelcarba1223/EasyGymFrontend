@@ -1,0 +1,28 @@
+<form [formGroup]="actividadForm" (ngSubmit)="submitForm()" class="actividad-form">
+  <div class="form-group">
+    <label for="nombre">Nombre:</label>
+    <input type="text" formControlName="nombre" id="nombre" class="form-control">
+  </div>
+
+  <div class="form-group">
+    <label for="horaInicio">Hora de Inicio:</label>
+    <input type="datetime-local" formControlName="horaInicio" id="horaInicio" class="form-control" step="1800">
+  </div>
+
+  <div class="form-group">
+    <label for="horaFinal">Hora Final:</label>
+    <input type="datetime-local" formControlName="horaFinal" id="horaFinal" class="form-control" step="1800">
+  </div>
+
+  <div class="form-group">
+    <label for="capacidad">Capacidad</label>
+    <input type="number" formControlName="capacidad" id="capacidad" class="form-control">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Enviar</button>
+  <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+</form>
+
+<div *ngFor="let hora of horasDisponibles" class="hora-disponible">
+  {{ formatearFecha(hora.horaInicio) }} -- {{ formatearFecha(hora.horaFinal) }}
+</div>

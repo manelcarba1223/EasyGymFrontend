@@ -1,0 +1,14 @@
+.calendar-container {
+    border: 1px solid #ddd; /* Añade un borde al contenedor */
+    border-radius: 5px; /* Añade bordes redondeados */
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1); /* Añade sombra */
+    padding: 20px; /* Añade espacio interno */
+    background-color: #fff; /* Fondo blanco */
+  }
+  
+  /* Estilos opcionales para hacerlo más atractivo */
+  .calendar-container full-calendar {
+    width: 100%; /* Asegura que el calendario ocupe todo el ancho del contenedor */
+    height: 600px; /* Altura del calendario */
+  }
+  

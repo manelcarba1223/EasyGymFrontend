@@ -1,0 +1,21 @@
+<mat-toolbar color="primary" class="custom-toolbar">
+  <a [routerLink]="'/'" class="logo-link">
+    <img src="assets/logoeasygym.jpeg" alt="Logo" class="logo-image">
+  </a>
+  <span>EasyGym</span>
+  <span class="example-spacer"></span>
+  
+  <ng-container *ngIf="!isLoggedIn; else loggedIn" class="right-align">
+    <a [routerLink]="'/login'" class="derecha"><i class="fa-solid fa-user"></i> Iniciar sesión</a>
+    <a [routerLink]="'/signup'" class="nav-link"><i class="fa-solid fa-user-plus"></i> Registrarse</a>
+  </ng-container>
+
+  <ng-template #loggedIn>
+    <a [routerLink]="'/'" class="nav-link">Inicio</a>
+    <a [routerLink]="'/gimnasios'" class="nav-link">Gimnasios</a>
+    <a [routerLink]="['/ver-usuario', user?.username]" class="nav-link">Perfil</a>
+    <a (click)="logout()" class="derecha">Cerrar sesión</a>
+  </ng-template>
+</mat-toolbar>
+
+

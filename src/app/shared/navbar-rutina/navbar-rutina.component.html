@@ -1,0 +1,23 @@
+<mat-toolbar color="primary" class="custom-toolbar">
+  <a [routerLink]="'/'" mat-icon-button aria-label="Menú">
+    <i class="fas fa-bars"></i>
+  </a>
+  <img src="assets/logoeasygym.jpeg" alt="Logo de EasyGym" class="logo">
+  <span class="title">EasyGym</span>
+  <span class="spacer"></span>
+  
+  <!-- Botón de Añadir Rutina -->
+  <button mat-icon-button aria-label="Añadir Rutina" class="custom-button" (click)="abrirDialogoCrearRutina()">
+    Crear rutina
+  </button>
+
+  <!-- Botón de Añadir Disponibilidad -->
+  <button mat-icon-button aria-label="Añadir Disponibilidad" class="custom-button" (click)="abrirDialogoAniadirDisponibilidad()">
+    Añadir disponibilidad
+  </button>
+  
+  <!-- Botón de Volver -->
+  <button mat-icon-button aria-label="Volver" class="custom-button" (click)="volver()">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+</mat-toolbar>

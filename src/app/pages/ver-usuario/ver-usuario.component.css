@@ -1,0 +1,82 @@
+/* Estilos globales */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Estilos para la sección de usuario */
+.user-section {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-title {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.user-details {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-info {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.gym-item {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.gym-item:hover {
+    background-color: #f5f5f5;
+}
+
+.gym-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.gym-name {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.gym-location {
+    font-size: 16px;
+    color: #666;
+}
+
+.gym-details {
+    margin-top: 15px;
+}
+
+.gym-info {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #444;
+}
+
+.gym-info strong {
+    font-weight: bold;
+}
