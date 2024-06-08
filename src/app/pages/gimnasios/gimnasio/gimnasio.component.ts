@@ -7,6 +7,8 @@ import { LoginService } from 'src/app/services/login.service';
 import { CrearGimnasioComponent } from '../crear-gimnasio/crear-gimnasio.component';
 import { MatDialog } from '@angular/material/dialog';
 import { User } from 'src/app/models/user/user';
+import { ConfirmationDialogComponent } from 'src/app/shared/confirmation-dialog/confirmation-dialog.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-gimnasio',
@@ -14,15 +16,17 @@ import { User } from 'src/app/models/user/user';
   styleUrls: ['./gimnasio.component.css']
 })
 export class GimnasioComponent {
-
-
   gimnasios: Gimnasio[] = [];
+  gimnasiosFiltrados: Gimnasio[] = [];
   isLoggedOn: boolean = false;
   singleClick = false;
   user!: User;
-  registrado: boolean= false;
+  registrado: boolean = false;
   public estaRegistradoEnGimnasio: boolean = false;
+  public esDueno: { [key: number]: boolean } = {};
   logos: { [key: number]: string | ArrayBuffer | null } = {}; // Objeto para almacenar las URLs de los logos
+  rol!: any;
+  filtroBuscar: string = ''; // Propiedad para almacenar el término de búsqueda
 
   constructor(private gimnasioService: GimnasioService, private loginService: LoginService,
     private router: Router, public dialog: MatDialog) { }
@@ -30,8 +34,7 @@ export class GimnasioComponent {
   openDialogCrear(): void {
     const dialogRef = this.dialog.open(CrearGimnasioComponent, {
       width: 'auto',
-      data: { action: 'crear' } // Pasa los parámetros al diálogo
-      
+      data: { action: 'crear' } // Pasa los parámetros al diálogo   
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -41,15 +44,31 @@ export class GimnasioComponent {
 
   ngOnInit(): void {
     this.isLoggedOn = this.loginService.isLoggedIn();
-    this.getGimnasios();
     this.user = this.loginService.getUser();
-    console.log(this.verLogo(1))
+    this.rol = this.loginService.getUserRole();
+
+    this.getGimnasios(); // Llamamos a getGimnasios primero
+  }
+
+  verificarRegistroEnGimnasio(): void {
+    // Iterar sobre los gimnasios y verificar si el usuario está registrado en cada uno
+    this.gimnasios.forEach(gimnasio => {
+      this.usuarioRegistradoEnGimnasio(gimnasio.id_gimnasio).subscribe(
+        registrado => {
+          // Almacena el estado de registro del usuario para cada gimnasio
+          this.esDueno[gimnasio.id_gimnasio] = registrado;
+        }
+      );
+    });
   }
 
   getGimnasios(): void {
     this.gimnasioService.verGimnasios()
       .subscribe(gimnasios => {
         this.gimnasios = gimnasios;
+        this.gimnasiosFiltrados = gimnasios; // Inicializa los gimnasios filtrados
+        // Llama a verificarRegistroEnGimnasio para determinar el registro del usuario en cada gimnasio
+        this.verificarRegistroEnGimnasio();
         // Llama a verLogo para cargar las URL de los logos de los gimnasios
         this.gimnasios.forEach(gimnasio => this.verLogo(gimnasio.id_gimnasio));
       });
@@ -68,56 +87,60 @@ export class GimnasioComponent {
       },
       (error) => {
         console.error('Error al cargar el logo del gimnasio:', error);
-        // Maneja el error, si es necesario
       }
     );
   }
-  
 
-
+  /**
+   * Metodo para eliminar un gimnasio
+   * @param id 
+   */
   public eliminarGimnasio(id: number): void {
-    this.gimnasioService.eliminarGimnasio(id).subscribe(
-      () => {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '250px',
+      data: { message: '¿Estás seguro de que deseas eliminar este gimnasio?' }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.gimnasioService.eliminarGimnasio(id).subscribe(
+          () => {
+            Swal.fire('Exito', 'El gimnasio se eliminó correctamente.', 'success');
 
-        console.log('El gimnasio se eliminó correctamente.');
-        // Aquí puedes actualizar la lista de gimnasios o realizar otras acciones necesarias después de eliminar
-      },
-      (error: any) => {
-        console.error('Error al eliminar el gimnasio:', error);
-        // Aquí puedes mostrar un mensaje de error al usuario o realizar otras acciones necesarias en caso de error
+            location.reload()
+          },
+          (error: any) => {
+            Swal.fire('Error', 'Error al eliminar el gimnasio', 'error');
+
+            location.reload()
+          }
+        );
       }
-    );
+    })
   }
-
-
-  // Método para obtener el logo de un gimnasio por su ID
-  
-
-
 
   // Método para manejar el doble clic
   handleDoubleClick(idGimnasio: number) {
     if (this.singleClick) {
-      // Realiza la acción que deseas al detectar el doble clic, por ejemplo, navegar al detalle del gimnasio
       this.usuarioRegistradoEnGimnasio(idGimnasio).subscribe(
         registrado => {
           if (registrado) {
-            // Realiza la acción que deseas al detectar el doble clic, por ejemplo, navegar al detalle del gimnasio
+            this.estaRegistradoEnGimnasio = true; // Actualiza el estado de registro del usuario
             this.router.navigateByUrl('/ver-gimnasio/' + idGimnasio);
           } else {
-            alert("Debes registrarte en el gimnasio antes de poder acceder a el")
+            Swal.fire('Error', 'Debes registrarte en el gimnasio antes de poder acceder a él', 'warning');
+
+            this.estaRegistradoEnGimnasio = false; // Actualiza el estado de registro del usuario
           }
         }
       );
     } else {
-      // Si es el primer clic, marca singleClick como true y espera un corto período para detectar un segundo clic
       this.singleClick = true;
       setTimeout(() => {
         this.singleClick = false;
-      }, 250); // Puedes ajustar este valor según tus necesidades
+      }, 250);
     }
   }
-  
+
   openDialogEditar(gimnasioId: number): void {
     const dialogRef = this.dialog.open(CrearGimnasioComponent, {
       width: 'auto',
@@ -128,31 +151,47 @@ export class GimnasioComponent {
     dialogRef.afterClosed().subscribe(result => {
       console.log('El diálogo se cerró');
       location.reload()
-
     });
   }
 
+  /**
+   * Metodo para saber si el usuario está o no registrado
+   * @param idGimnasio 
+   * @returns 
+   */
   usuarioRegistradoEnGimnasio(idGimnasio: number): Observable<boolean> {
-    
     return this.gimnasioService.verGimnasioPorId(idGimnasio).pipe(
       map(gimnasio => gimnasio.usuarios.includes(this.user.username))
     );
-    
   }
 
+  /**
+   * Metodo para registrar un usuario en un gimnasio
+   * @param gimnasioId 
+   */
   registrarUsuarioEnGimnasio(gimnasioId: number) {
+    console.log("ID " + this.user)
     this.gimnasioService.registrarUsuarioEnGimnasio(gimnasioId, this.user.id).subscribe(
       (response) => {
         console.log('Usuario añadido con exito');
-        alert("Te acabas de registrar en el gimnasio")
-        // Puedes realizar cualquier otra acción aquí después de registrar al usuario en el gimnasio
+        Swal.fire('Exito', 'Te acabas de registrar en el gimnasio', 'success');
+
       },
       error => {
-        alert("Ya estas registrado")
+        Swal.fire('Error', 'Ya estas registrado', 'warning');
+
         console.error('Error al registrar usuario en el gimnasio:', error);
-        // Manejo de errores aquí
       }
     );
   }
-  
+
+  /**
+   * Metodo para filtrar gimnasios
+   */
+  filtrarGimnasios() {
+    this.gimnasiosFiltrados = this.gimnasios.filter(gimnasio =>
+      gimnasio.nombre.toLowerCase().includes(this.filtroBuscar.toLowerCase()) ||
+      gimnasio.ciudad.toLowerCase().includes(this.filtroBuscar.toLowerCase())
+    );
+  }
 }

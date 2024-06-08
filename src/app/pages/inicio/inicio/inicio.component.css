@@ -1,51 +1,42 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .container {
-    margin-top: 50px;
-  }
-  
-  .welcome-section {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-    border: 2px solid #28a745;
+.container {
+  margin-top: 50px;
+}
 
-  }
-  
-  .welcome-section h1 {
-    color: #333;
-    
-  }
-  
-  .welcome-content {
-    text-align: center;
-  }
-  
-  .welcome-message {
-    font-size: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .username {
-    font-weight: bold;
-    color: #007bff;
-  }
-  
-  
-/* Estilos para la sección que explica qué es la aplicación */
+/* Estilos para las secciones de bienvenida */
+.welcome-section {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 2px solid #28a745;
+}
+
+.welcome-section h1 {
+  color: #333;
+}
+
+.welcome-content {
+  text-align: center;
+}
+
+.welcome-message {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.username {
+  font-weight: bold;
+  color: #007bff;
+}
+
+/* Estilos para la sección de información de la aplicación */
 .app-info-section {
-  margin-top: 40px; /* Espacio entre la última sección de bienvenida y esta sección */
+  margin-top: 40px;
 }
 
 .app-info-content {
-  background-color: #c8e6c9; /* Color de fondo verde claro */
+  background-color: #c8e6c9;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -54,11 +45,11 @@ body {
 .app-info-content h2 {
   font-size: 24px;
   margin-bottom: 20px;
-  color: #2e7d32; /* Color de texto verde más oscuro */
+  color: #2e7d32;
 }
 
 .app-info-content p {
   font-size: 16px;
   margin-bottom: 10px;
-  color: #2e7d32; /* Color de texto verde más oscuro */
+  color: #2e7d32;
 }

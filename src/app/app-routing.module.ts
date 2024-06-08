@@ -5,10 +5,10 @@ import { GimnasioComponent } from './pages/gimnasios/gimnasio/gimnasio.component
 import { LoginComponent } from './pages/auth/login/login.component';
 import { CrearGimnasioComponent } from './pages/gimnasios/crear-gimnasio/crear-gimnasio.component';
 import { VerGimnasioComponent } from './pages/gimnasios/ver-gimnasio/ver-gimnasio.component';
-import { CrearRutinaComponent } from './pages/rutinas/crear-rutina/crear-rutina.component';
-import { CrearEjercicioComponent } from './pages/ejercicios/crear-ejercicio/crear-ejercicio.component';
+import { CrearRutinaComponent } from './pages/actividades/crear-actividades/crear-actividad.component';
 import { VerUsuarioComponent } from './pages/ver-usuario/ver-usuario.component';
 import { InicioComponent } from './pages/inicio/inicio/inicio.component';
+import { CrearSalaComponent } from './pages/crear-sala/crear-sala.component';
 
 const routes: Routes = [
   { path: '', component: InicioComponent },
@@ -19,10 +19,8 @@ const routes: Routes = [
   { path: 'crear-gimnasio', component: CrearGimnasioComponent },
   { path: 'ver-gimnasio/:id', component: VerGimnasioComponent },
   {path: 'crearRutina/:id', component: CrearRutinaComponent},
-  {path: 'crearEjercicio', component: CrearEjercicioComponent},
-  {path: 'ver-usuario/:username', component: VerUsuarioComponent}
-
-
+  {path: 'ver-usuario/:username', component: VerUsuarioComponent},
+  {path: 'crear-sala/:idGimnasio', component: CrearSalaComponent}
 ];
 
 @NgModule({

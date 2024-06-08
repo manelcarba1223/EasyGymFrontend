@@ -1,29 +1,40 @@
 .custom-toolbar {
-  background-color: #1976d2; /* Color de fondo azul */
-  color: white; /* Color del texto blanco */
-  display: flex; /* Utiliza flexbox para alinear los elementos */
-  align-items: center; /* Centra verticalmente los elementos */
-  padding: 0 20px; /* Añade un poco más de espacio alrededor de los elementos */
+  background-color: #1976d2;
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 5px; /* Reducir el padding para aprovechar mejor el espacio */
 }
 
 .logo {
-  width: 40px; /* Tamaño del logo */
-  height: auto; /* Altura automática para mantener la proporción */
-  margin-right: 10px; /* Espaciado a la derecha */
+  width: 30px; /* Reducir el tamaño del logo */
+  height: auto;
+  margin-right: 5px; /* Reducir el margen entre el logo y el título */
 }
 
 .title {
-  font-size: 1.5rem; /* Tamaño del título */
+  font-size: 1.2rem; /* Reducir el tamaño del título */
+  margin-right: auto;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
 }
 
 .custom-button {
-  color: white; /* Color del texto blanco */
-  background-color: #4caf50; /* Color de fondo verde */
-  border-radius: 5px; /* Bordes redondeados */
-  padding: 8px 16px; /* Espaciado interno */
-  margin: 50px;
+  color: white;
+  background-color: #4caf50;
+  border-radius: 5px;
+  padding: 4px 8px; /* Reducir el padding de los botones */
+  margin-left: 5px; /* Reducir el margen entre los botones */
 }
 
 .custom-button:last-child {
-  margin-left: auto; /* Empuja el botón "Volver" a la derecha */
+  margin-right: 0;
+}
+
+.mat-tooltip {
+  background-color: #333;
+  color: white;
 }

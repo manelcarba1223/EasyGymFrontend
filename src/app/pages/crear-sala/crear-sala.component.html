@@ -1,0 +1,11 @@
+<div class="container">
+    <h2>Crear Sala</h2>
+    <form [formGroup]="salaForm" class="actividad-form" (ngSubmit)="guardarSala()">
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" formControlName="nombre" class="form-control" required>
+
+        </div>
+        <button type="submit" class="btn btn-primary" [disabled]="salaForm.invalid">Guardar Sala</button>
+    </form>
+</div>

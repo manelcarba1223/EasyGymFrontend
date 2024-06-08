@@ -5,9 +5,9 @@ import { Gimnasio } from '../gimnasio/gimnasio';
 export class HorasDisponibles {
 
     id: number;
-    horaInicio: string; // Opcional: puedes usar un tipo más específico si lo deseas
-    horaFinal: string; // Opcional: puedes usar un tipo más específico si lo deseas
-    gimnasio?: Gimnasio; // Suponiendo que ya tienes definida la interfaz Gimnasio
+    horaInicio: string; 
+    horaFinal: string; 
+    gimnasio?: Gimnasio;
 
     constructor(
       id: number,

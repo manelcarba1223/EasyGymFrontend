@@ -19,10 +19,22 @@
     <input type="number" formControlName="capacidad" id="capacidad" class="form-control">
   </div>
 
-  <button type="submit" class="btn btn-primary">Enviar</button>
+  <div class="form-group">
+    <label for="sala">Sala:</label>
+    <select formControlName="sala" id="sala" class="form-control" (change)="seleccionarSala($event)">
+      <option *ngFor="let sala of salas" [value]="sala.idSala">{{ sala.nombre }}</option>
+    </select>
+  </div>
+
+  <div *ngIf="horasDisponibles && horasDisponibles.length > 0" class="form-group">
+    <label>Horas Disponibles:</label>
+    <ul>
+      <li *ngFor="let hora of horasDisponibles">
+        {{ hora.horaInicio | date: 'dd/MM HH:mm':'UTC' }} - {{ hora.horaFinal | date: 'dd/MM HH:mm':'UTC' }}
+      </li>
+    </ul>
+  </div>
+
+  <button type="submit" class="btn btn-primary" [disabled]="actividadForm.invalid">Enviar</button>
   <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
 </form>
-
-<div *ngFor="let hora of horasDisponibles" class="hora-disponible">
-  {{ formatearFecha(hora.horaInicio) }} -- {{ formatearFecha(hora.horaFinal) }}
-</div>

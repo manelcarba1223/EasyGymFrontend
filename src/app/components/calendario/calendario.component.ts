@@ -1,44 +1,96 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {  Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import esLocale from '@fullcalendar/core/locales/es'
-import { RutinaService } from 'src/app/services/rutina.service';
+import esLocale from '@fullcalendar/core/locales/es';
+import { RutinaService } from 'src/app/services/actividad.service';
 import { ActivatedRoute } from '@angular/router';
 import { GimnasioService } from 'src/app/services/gimnasio.service';
-import { Actividad } from 'src/app/models/Actividad';
-import { UserService } from 'src/app/services/user.service';
 import { LoginService } from 'src/app/services/login.service';
-import { Calendar } from '@fullcalendar/core';
 
-import listPlugin from '@fullcalendar/list'
+import listPlugin from '@fullcalendar/list';
 import { ConfirmationDialogComponent } from 'src/app/shared/confirmation-dialog/confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Gimnasio } from 'src/app/models/gimnasio/gimnasio';
+import { Sala } from 'src/app/models/sala/sala/sala.component';
+import Swal from 'sweetalert2';
+import { Actividad } from 'src/app/models/actividad/Actividad';
 
 @Component({
   selector: 'app-calendario',
   templateUrl: './calendario.component.html',
   styleUrls: ['./calendario.component.css']
 })
-export class CalendarioComponent implements OnInit {
+export class CalendarioComponent implements OnInit, OnChanges {
+  @Input() idSalaSeleccionada!: number;
   idGimnasio!: number;
   eventos: any[] = [];
   actividades!: Actividad[];
   showConfirmationDialog: boolean = false;
   actividadId!: number;
+  salas!: Sala[];
+  rol: any;
+  usuario!: any;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef, private actividadService: RutinaService, private route: ActivatedRoute, private loginService: LoginService, private dialog: MatDialog) { }
+  constructor(private actividadService: RutinaService, private route: ActivatedRoute, private loginService: LoginService,
+    private gimnasioService: GimnasioService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.idGimnasio = +params['id'];
-      this.obtenerActividades(this.idGimnasio);
+      this.obtenerSalas(this.idGimnasio);
     });
+
+    this.obtenerUsuarioCompleto();
+
   }
 
-  obtenerActividades(idGimnasio: number) {
-    this.actividadService.verRutinas(idGimnasio).subscribe(
+  /**
+   * Metodo que detecta el cambio de sala para mostrar las actividades de esa sala
+   * @param changes 
+   */
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('ID de la sala recibida en el calendario:', this.idSalaSeleccionada);
+
+    if (changes['idSalaSeleccionada'] && !changes['idSalaSeleccionada'].firstChange) {
+      this.obtenerActividades(this.idSalaSeleccionada);
+    }
+  }
+
+  /**
+   * Metodo que da valor al usuario actual y al rol
+   */
+  obtenerUsuarioCompleto() {
+    this.loginService.getCurrentUser().subscribe(
+      (user) => {
+        this.usuario = user;
+        this.rol = this.loginService.getUserRole();
+      }
+    )
+  }
+
+  /**
+   * Metodo que da valor a las salas
+   * @param idGimnasio 
+   */
+  obtenerSalas(idGimnasio: number) {
+    this.gimnasioService.obtenerSalasPorGimnasio(idGimnasio).subscribe(
+      (salas: Sala[]) => {
+        this.salas = salas;
+      },
+      (error) => {
+        console.log("Error al obtener las salas " + error)
+      }
+    )
+  }
+
+  /**
+   * Metodo que da valor a las actividades y a los eventos del calendario
+   * @param idSala 
+   */
+  obtenerActividades(idSala: number) {
+    this.actividadService.verRutinas(idSala).subscribe(
       actividades => {
         this.actividades = actividades;
         this.eventos = actividades.map(actividad => ({
@@ -48,7 +100,7 @@ export class CalendarioComponent implements OnInit {
           id: actividad.id_actividad,
           display: null
         }));
-        this.calendarOptions.events = this.eventos;
+        this.opcionesCalendario.events = this.eventos;
       },
       error => {
         console.log("Error al obtener las actividades")
@@ -56,159 +108,194 @@ export class CalendarioComponent implements OnInit {
     );
   }
 
-
-  calendarOptions: CalendarOptions = {
-    initialView: 'timeGridWeek',
-    plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin],
-    eventClick: (info) => this.handleEventClick(info),
+  /**
+   * Creo un objeto de tipo CalendarOptions
+   */
+  opcionesCalendario: CalendarOptions = {
+    initialView: 'timeGridWeek', // vista inicial
+    plugins: [dayGridPlugin, interactionPlugin, timeGridPlugin, listPlugin], // importo los plugins de las vistas
+    eventClick: (info) => this.handleEventClick(info), // llama al evento handleEventClick cuando hago click en una actividad
     eventDrop: (arg) => this.handleEventDrop(arg),
-    headerToolbar: {
+    headerToolbar: { // manejo las vistas
       left: 'prev,next today',
       center: 'title',
       right: 'timeGridWeek,timeGridDay,listWeek,dayGridMonth'
     },
-    events: this.eventos,
-    droppable: true,
-    locale: esLocale,
-    editable: true, // Permite arrastrar y editar eventos
-    timeZone: 'UTC+0',
-    businessHours: { // Establece las horas de negocio de lunes a viernes de 9am a 5pm
-      daysOfWeek: [1, 2, 3, 4, 5, 6, 7], // Lunes a viernes
-      startTime: '09:00', // 9am
-      endTime: '17:00' // 5pm
-    }
+    events: this.eventos, // los eventos es una lista de actividades formateada para que sea valida 
+    droppable: true, // se puede editar en el calendario directamente
+    locale: esLocale, // hora local
+    editable: true, // permite arrastrar y editar eventos
+    timeZone: 'UTC+0', // zona horaria
   };
+
+  /**
+   * metodo que se llama al clicar en una actividad, si es usuario registra o desregistra, sino se abre el dialogo para borrarlo
+   * @param eventClickInfo 
+   */
   handleEventClick(eventClickInfo: any) {
-    // Obtener el ID de la actividad
     this.actividadId = eventClickInfo.event.id;
-    const usuarioId = this.loginService.getUser().id;
-    const userRole = this.loginService.getUserRole();
-
-    if (userRole === 'ROLE_ENTRENADOR' || userRole === 'ROLE_ADMIN') {
-      // Si el usuario es un entrenador, mostrar el diálogo de confirmación para borrar la rutina
-      const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
-        width: '250px',
-        data: { message: '¿Quieres borrar la actividad?' },
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          // Si el usuario confirma, borrar la rutina
-          this.borrarRutina(this.actividadId);
-        }
-      });
+    if (this.rol === "ROLE_USER") {
+      this.usuarioRegistradoEnActividad(this.usuario.id, this.actividadId)
     } else {
-      // Verificar si el usuario está registrado en la actividad
-      this.usuarioRegistradoEnActividad(usuarioId, this.actividadId);
+      this.confirmBorrarRutina(this.actividadId);
     }
+
   }
 
-
+  /**
+   * Metodo que abre el dialogo para borrar la actividad, hace todas las validaciones necesarias
+   * @param actividadId 
+   */
   confirmBorrarRutina(actividadId: number) {
-    this.borrarRutina(actividadId);
-    this.showConfirmationDialog = false; // Ocultar el diálogo después de confirmar
-    location.reload();
+    this.actividadService.obtenerActividadPorId(actividadId).subscribe(
+      (actividad) => {
+        if (!actividad || !actividad.users || !Array.isArray(actividad.users)) {
+          console.log("Datos de actividad no válidos: ", actividad);
+          Swal.fire('Error', 'Error al verificar el propietario de la actividad. Por favor, inténtelo de nuevo.', 'error');
+          return;
+        }
+        const esAdminDueño = this.rol === "ROLE_ADMIN" || this.rol === "ROLE_DUEÑO";
+        const esEntrenadorOwner = this.rol === "ROLE_ENTRENADOR" && actividad.users.some(user => {
+          return user.username === this.usuario.username;
+        });
+        if (esAdminDueño || esEntrenadorOwner) {
+          const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+            width: '250px',
+            data: { message: '¿Quieres borrar la actividad?' },
+          });
+          dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+              this.borrarActividad(actividadId);
+            }
+          });
+        } else {
+          Swal.fire('Error', 'No eres el propietario de esta actividad', 'error');
+        }
+      },
+      (error) => {
+        console.log("Error al obtener la actividad: " + error);
+        Swal.fire('Error', 'No eres el propietario de esta actividad', 'error');
+
+      }
+    );
   }
 
   cancelarBorrarRutina() {
-    this.showConfirmationDialog = false; // Ocultar el diálogo si se cancela
+    this.showConfirmationDialog = false;
   }
 
+  /**
+   * Metodo que registra o desregistra dependiendo si el usuario está ya registrado
+   * @param usuarioId 
+   * @param actividadId 
+   */
   usuarioRegistradoEnActividad(usuarioId: number, actividadId: number) {
     // Verificar si el usuario está registrado en la actividad
     this.actividadService.verificarRegistroUsuarioEnActividad(usuarioId, actividadId).subscribe(
       registrado => {
         // Si está registrado, desregistrarlo
         if (registrado) {
-          alert("Te has ido de la actividad");
           this.desregistrarUsuarioDeActividad(usuarioId, actividadId);
+
         } else {
           // Si no está registrado, registrarlo
           this.registrarUsuarioAActividad(usuarioId, actividadId);
+
+
         }
       },
       error => {
         console.error('Error al verificar el registro del usuario en la actividad:', error);
-        // Manejar el error según sea necesario
       }
     );
   }
 
+  /**
+   * Metodo para desregistrar a un usuario de la actividad
+   * @param usuarioId 
+   * @param actividadId 
+   */
   desregistrarUsuarioDeActividad(usuarioId: number, actividadId: number) {
     this.actividadService.desregistrarUsuarioDeActividad(usuarioId, actividadId).subscribe(
       () => {
         console.log('Usuario desregistrado de la actividad correctamente');
-        // Realizar cualquier otra acción necesaria después de desregistrar al usuario de la actividad
+        Swal.fire('Exito', 'Usuario desregistrado de la actividad correctamente', 'success').then((result) => {
+          if (result.isConfirmed) {
+            location.reload();
+          }
+        });
+
       },
       error => {
         console.error('Error al desregistrar usuario de la actividad:', error);
-        // Manejar el error según sea necesario
+        Swal.fire('Error', 'Error al desregistrar usuario de la actividad:', 'error');
+
       }
     );
   }
 
+  /**
+   * Metodo que registra al usuario en la actividad
+   * @param usuarioId 
+   * @param actividadId 
+   */
   registrarUsuarioAActividad(usuarioId: number, actividadId: number) {
-    // Simplemente llamando al servicio para agregar usuario a la actividad
-    // Debes implementar la lógica de este método en tu servicio RutinaService
     this.actividadService.agregarUsuarioAActividad(usuarioId, actividadId).subscribe(
       () => {
         console.log('Usuario agregado a la actividad correctamente');
-        alert("Te has registrado a la actividad");
+        Swal.fire('Exito', 'Te has registrado a la actividad', 'success').then((result) => {
+          if (result.isConfirmed) {
+            location.reload();
+          }
+        });
+
+
       },
       error => {
-        console.error('Error al agregar usuario a la actividad:', error);
-        alert("No puedes registrarte en la actividad porque la actividad está llena")
+        console.log('Error al agregar usuario a la actividad:', error);
+        Swal.fire('Error', 'La actividad esta llena', 'error').then((result) => {
+          if (result.isConfirmed) {
+            location.reload();
+          }
+        });
+
+
       }
     );
   }
 
-  // Función para convertir tiempo UNIX a una cadena de fecha y hora legible
-  convertirTiempoUnixAFecha(tiempoUnix: number): string {
-    // Crea un objeto Date con el tiempo UNIX proporcionado
-    const fecha = new Date(tiempoUnix * 1000); // Multiplica por 1000 para convertir de segundos a milisegundos
 
-    // Obtiene los componentes de la fecha y hora
-    const año = fecha.getFullYear();
-    const mes = ('0' + (fecha.getMonth() + 1)).slice(-2); // Agrega un cero inicial y toma los últimos dos dígitos
-    const dia = ('0' + fecha.getDate()).slice(-2); // Agrega un cero inicial y toma los últimos dos dígitos
-    const horas = ('0' + fecha.getHours()).slice(-2); // Agrega un cero inicial y toma los últimos dos dígitos
-    const minutos = ('0' + fecha.getMinutes()).slice(-2); // Agrega un cero inicial y toma los últimos dos dígitos
-    const segundos = ('0' + fecha.getSeconds()).slice(-2); // Agrega un cero inicial y toma los últimos dos dígitos
-
-    // Retorna la cadena de fecha y hora legible
-    return `${año}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
-  }
-
+  /**
+   * Metodo que se llama cuando se mueve una actividad, si cumple las validaciones se llama al servidor que la actualiza en la base de datos
+   * @param eventDropInfo 
+   * @returns 
+   */
   handleEventDrop(eventDropInfo: any) {
     const event = eventDropInfo.event;
-    const nuevaFechaInicio = new Date(event.start); // Utiliza la fecha y hora del evento directamente
-    const nuevaFechaFinal = new Date(event.end); // Utiliza la fecha y hora del evento directamente
+    const nuevaFechaInicio = new Date(event.start);
+    const nuevaFechaFinal = new Date(event.end);
     const idActividad = event.id;
+    let actividadActual = null;
 
     // Verificar la superposición con otras actividades
     const existeSuperposicion = this.actividades.some(actividad => {
-      // Convertir las fechas de las actividades existentes a objetos Date
+      actividadActual = actividad;
       const fechaInicioExistente = new Date(actividad.horaInicio);
       const fechaFinalExistente = new Date(actividad.horaFinal);
 
-      // Si la actividad es la misma que se está moviendo, se omitirá la comparación
       if (actividad.id_actividad == idActividad) {
         return false;
       }
 
       return (
-        // Verificar si la nueva actividad comienza antes de que termine una actividad existente
         (nuevaFechaInicio < fechaFinalExistente && nuevaFechaFinal > fechaInicioExistente) ||
-        // Verificar si la nueva actividad termina después de que comienza una actividad existente
         (nuevaFechaFinal > fechaInicioExistente && nuevaFechaInicio < fechaFinalExistente) ||
-        // Verificar si la nueva actividad está completamente dentro de una actividad existente
         (nuevaFechaInicio >= fechaInicioExistente && nuevaFechaFinal <= fechaFinalExistente)
       );
     });
 
     if (existeSuperposicion) {
       console.log('Ya hay una actividad programada en este intervalo de tiempo.');
-      // Si hay superposición, revierte los cambios arrastrando el evento de nuevo a su posición original
       eventDropInfo.revert();
       return;
     }
@@ -217,41 +304,65 @@ export class CalendarioComponent implements OnInit {
     const actividadActualizada: Actividad = {
       id_actividad: idActividad,
       nombre: event.title,
-      descripcion: event.extendedProps.descripcion, // Accede a la descripción a través de extendedProps
-      horaInicio: nuevaFechaInicio.toISOString(), // Serializa la fecha y hora en formato ISO 8601
-      horaFinal: nuevaFechaFinal.toISOString(), // Serializa la fecha y hora en formato ISO 8601
-      capacidad: event.capacidad,
-      users: []
+      descripcion: event.extendedProps.descripcion,
+      horaInicio: nuevaFechaInicio.toISOString(),
+      horaFinal: nuevaFechaFinal.toISOString(),
+      capacidad: actividadActual!.capacidad,
+      users: [],
+      sala: {
+        idSala: 0,
+        nombre: '',
+        actividades: [],
+        gimnasio: new Gimnasio,
+        horasDisponibles: []
+      }
     };
 
-    this.actualizarActividad(actividadActualizada);
-    location.reload();
+    this.actividadService.obtenerActividadPorId(idActividad).subscribe(
+      (actividad) => {
+        const esAdminDueño = this.rol === "ROLE_ADMIN" || this.rol === "ROLE_DUEÑO";
+        const esEntrenadorOwner = this.rol === "ROLE_ENTRENADOR" && actividad.users.some(user => {
+          return user.username === this.usuario.username;
+        });
+        if (esAdminDueño || esEntrenadorOwner) {
+          this.actualizarActividad(actividadActualizada, this.idSalaSeleccionada);
+        } else {
+          Swal.fire('Error', 'No tienes permisos para editar esta actividad', 'error');
+          eventDropInfo.revert();
+        }
+      });
+
   }
 
-
-  actualizarActividad(actividad: Actividad) {
-    this.actividadService.actualizarActividad(actividad).subscribe(
+  /**
+   * Metodo que llama al servicio para actualizar la actividad
+   * @param actividad 
+   * @param salaId 
+   */
+  actualizarActividad(actividad: Actividad, salaId: number) {
+    this.actividadService.actualizarActividad(actividad, salaId).subscribe(
       (actividadActualizada) => {
 
         console.log('Actividad actualizada:', actividadActualizada);
-        // Aquí puedes realizar cualquier otra acción después de la actualización, si es necesario
+        location.reload()
       },
       error => {
         console.error('Error al actualizar la actividad:', error);
-        // Si hay un error, revierte los cambios arrastrando el evento de nuevo a su posición original
       }
     );
   }
 
-  borrarRutina(id: number) {
+  /**
+   * Metodo que llama al servidor para borrar una actividad por id
+   * @param id 
+   */
+  borrarActividad(id: number) {
     this.actividadService.borrarRutina(id).subscribe(
       () => {
-        console.log('Rutina borrada exitosamente');
-        // Realizar cualquier acción adicional después de borrar la rutina
+        console.log('Actividad borrada exitosamente');
       },
       error => {
-        console.error('Error al borrar la rutina:', error);
-        // Manejar el error según sea necesario
+        console.error('Error al borrar la actividad:', error);
       }
     );
   }

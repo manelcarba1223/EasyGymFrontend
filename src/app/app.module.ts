@@ -24,10 +24,8 @@ import { authInterceptorProviders } from './interceptor/auth.interceptor';
 import { GimnasioComponent } from './pages/gimnasios/gimnasio/gimnasio.component';
 import { CrearGimnasioComponent } from './pages/gimnasios/crear-gimnasio/crear-gimnasio.component';
 import { VerGimnasioComponent } from './pages/gimnasios/ver-gimnasio/ver-gimnasio.component';
-import { EjerciciosComponent } from './components/ejercicios/ejercicios.component';
 import { NavbarRutinaComponent } from './shared/navbar-rutina/navbar-rutina.component';
-import { CrearRutinaComponent } from './pages/rutinas/crear-rutina/crear-rutina.component';
-import { CrearEjercicioComponent } from './pages/ejercicios/crear-ejercicio/crear-ejercicio.component';
+import { CrearRutinaComponent } from './pages/actividades/crear-actividades/crear-actividad.component';
 import { VerUsuarioComponent } from './pages/ver-usuario/ver-usuario.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { InicioComponent } from './pages/inicio/inicio/inicio.component';
@@ -36,7 +34,11 @@ import { CalendarioComponent } from './components/calendario/calendario.componen
 import { ConfirmationDialogComponent } from './shared/confirmation-dialog/confirmation-dialog.component'; // Importa FullCalendarModule
 import { MatButtonModule } from '@angular/material/button';
 import { AniadirHoraDisponibleComponent } from './pages/aniadir-hora-disponible/aniadir-hora-disponible.component';
-
+import { CrearSalaComponent } from './pages/crear-sala/crear-sala.component';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+registerLocaleData(localeEs, 'es-ES');
 
 @NgModule({
   declarations: [
@@ -47,15 +49,14 @@ import { AniadirHoraDisponibleComponent } from './pages/aniadir-hora-disponible/
     GimnasioComponent,
     CrearGimnasioComponent,
     VerGimnasioComponent,
-    EjerciciosComponent,
     NavbarRutinaComponent,
     CrearRutinaComponent,
-    CrearEjercicioComponent,
     VerUsuarioComponent,
     InicioComponent,
     CalendarioComponent,
     ConfirmationDialogComponent,
-    AniadirHoraDisponibleComponent
+    AniadirHoraDisponibleComponent,
+    CrearSalaComponent
       ],
   imports: [
     BrowserModule,
@@ -76,7 +77,8 @@ import { AniadirHoraDisponibleComponent } from './pages/aniadir-hora-disponible/
     MatListModule,
     MatDialogModule,
     FullCalendarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatTooltipModule
 
    ],
   providers: [authInterceptorProviders,

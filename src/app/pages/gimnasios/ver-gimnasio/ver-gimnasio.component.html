@@ -1,14 +1,29 @@
 <app-navbar-rutina [gimnasioId]="idGimnasio"></app-navbar-rutina>
-
 <div class="container">
+  <div class="gimnasio-nombre">
+    <h1>{{ nombreGimnasio }}</h1>
+  </div>
+<div class="container">
+  <div class="salas" *ngIf="salas && salas.length > 0">
+    <div *ngFor="let sala of salas" class="sala" (click)="seleccionarSala(sala.idSala)">
+      <h3>{{ sala.nombre }}</h3>
+      <button class="btn-eliminar" (click)="eliminarSala(sala.idSala, $event)" *ngIf="rol === ('ROLE_DUEÑO') || rol === ('ROLE_ADMIN')">
+        <i class="fas fa-trash-alt"></i> Eliminar
+      </button>
+    </div>
+  </div>
+  <div *ngIf="!salas || salas.length === 0">
+    <p>No hay salas disponibles.</p>
+  </div>
+
+
   <ng-container *ngIf="usuarioRegistrado$ | async; else notRegistered">
-    <app-calendario></app-calendario>
-    <div class="section">
-      <h2>Horas Disponibles</h2>
-      <div class="horas-disponibles">
-        <div *ngFor="let hora of horasDisponibles" class="hora">
-          {{ hora.horaInicio }} - {{ hora.horaFinal }}
-        </div>
+    <app-calendario [idSalaSeleccionada]="idSalaSeleccionada"></app-calendario>
+
+    <div class="horas-disponibles">
+      <div *ngFor="let hora of horasDisponibles" class="hora">
+        {{ hora.horaInicio | date: 'dd/MM HH:mm':'UTC' }} - {{ hora.horaFinal | date: 'dd/MM HH:mm':'UTC' }}
+
       </div>
     </div>
 
@@ -16,7 +31,7 @@
       <h2>Actividades Programadas</h2>
       <div class="actividades">
         <div *ngFor="let actividad of actividades" class="actividad">
-          <p>{{ actividad.nombre }} - {{ actividad.users.length }}/{{ actividad.capacidad }} personas registradas</p>
+          <p>{{ actividad.nombre }} - {{ actividad.users.length-1 }}/{{ actividad.capacidad-1 }} personas registradas</p>
           <ul>
             <li *ngFor="let usuario of actividad.users">{{ usuario.username }}</li>
           </ul>

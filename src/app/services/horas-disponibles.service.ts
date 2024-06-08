@@ -11,11 +11,12 @@ export class HorasDisponiblesService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public agregarHorasDisponibles(idGimnasio: number, horas: HorasDisponibles): Observable<void> {
-    return this.httpClient.post<void>(`${environment.urlHost}gimnasio/${idGimnasio}/horas-disponibles`, horas);
+  public agregarHorasDisponibles(idSala: number, horas: HorasDisponibles): Observable<void> {
+    return this.httpClient.post<void>(`${environment.urlHost}salas/${idSala}/agregar-horas`, horas);
   }
 
-  public devolverHorasDisponibles(idGimnasio: number): any {
-    return this.httpClient.get<any>(`${environment.urlHost}gimnasio/${idGimnasio}/horas-disponibles`);
+  public devolverHorasDisponibles(idSala: number): any {
+    return this.httpClient.get<any>(`${environment.urlHost}salas/${idSala}/horas-disponibles`);
   }
+
 }

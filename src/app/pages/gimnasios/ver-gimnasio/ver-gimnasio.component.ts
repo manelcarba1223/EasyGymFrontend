@@ -1,15 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, map } from 'rxjs';
-import { Ejercicio } from 'src/app/models/ejercicio';
-import { Actividad } from 'src/app/models/Actividad';
 import { User } from 'src/app/models/user/user';
-import { EjercicioService } from 'src/app/services/ejercicio.service';
 import { GimnasioService } from 'src/app/services/gimnasio.service';
 import { LoginService } from 'src/app/services/login.service';
-import { RutinaService } from 'src/app/services/rutina.service';
 import { HorasDisponiblesService } from 'src/app/services/horas-disponibles.service';
 import { HorasDisponibles } from 'src/app/models/horas-disponibles/horas-disponibles.component';
+import { SalaService } from 'src/app/services/sala.service';
+import { Sala } from 'src/app/models/sala/sala/sala.component';
+import { ConfirmationDialogComponent } from 'src/app/shared/confirmation-dialog/confirmation-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import Swal from 'sweetalert2';
+import { Gimnasio } from 'src/app/models/gimnasio/gimnasio';
+import { Actividad } from 'src/app/models/actividad/Actividad';
 
 @Component({
   selector: 'app-ver-gimnasio',
@@ -19,42 +22,55 @@ import { HorasDisponibles } from 'src/app/models/horas-disponibles/horas-disponi
 export class VerGimnasioComponent implements OnInit {
   actividades!: Actividad[];
   titulo!: string;
-  ejercicios!: Ejercicio[];
   idGimnasio!: number;
-  mostrarSelectEjercicios: boolean = false;
-  ejercicioSeleccionado!: Ejercicio;
   user!: User;
   usuarioRegistrado$: Observable<boolean> | undefined;
   horasDisponibles!: HorasDisponibles[];
+  idSalaSeleccionada!: number;
+  salas!: Sala[];
+  rol!: any;
+  nombreGimnasio!: String;
 
   constructor(
     private route: ActivatedRoute,
     private gimnasioService: GimnasioService,
-    private ejercicioService: EjercicioService,
     private loginService: LoginService,
-    private horasDisponiblesService: HorasDisponiblesService
+    private horasDisponiblesService: HorasDisponiblesService,
+    private salaService: SalaService,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      this.idGimnasio = +params['id']; // Obtiene el id del gimnasio de los parámetros de la ruta
-      this.obtenerGimnasio(this.idGimnasio);
+      this.idGimnasio = +params['id']; 
+      this.obtenerSalas(this.idGimnasio)
     });
-    this.user=this.loginService.getUser();
-    this.usuarioRegistrado$=this.usuarioRegistradoEnGimnasio();
-    this.obtenerHorasDisponibles(this.idGimnasio)
+    this.user = this.loginService.getUser();
+    this.usuarioRegistrado$ = this.usuarioRegistradoEnGimnasio();
+    this.rol = this.loginService.getUserRole();
+    this.obtenerGimnasio(this.idGimnasio)
   }
 
-
-
-  obtenerGimnasio(idGimnasio: number): void {
+  obtenerGimnasio(idGimnasio: number){
     this.gimnasioService.verGimnasioPorId(idGimnasio).subscribe(
-      gimnasio => {
-        this.titulo = gimnasio.nombre;
-        this.actividades = gimnasio.actividades!;
-        console.log(gimnasio)
-        console.log(this.actividades)
+      (gimnasio)=>{
+        this.nombreGimnasio=gimnasio.nombre;
+      },
+      (error)=>{
+        console.log(error +" error al obtener el gimnasio")
+      }
+    )
+  }
 
+  /**
+   * Metodo para obtener las actividades y el nombre de la sala
+   * @param idGimnasio 
+   */
+  obtenerSala(idGimnasio: number): void {
+    this.salaService.obtenerSalaPorId(idGimnasio).subscribe(
+      sala => {
+        this.titulo = sala.nombre;
+        this.actividades = sala.actividades!;
       },
       error => {
         console.log("Error al obtener el titulo")
@@ -62,46 +78,76 @@ export class VerGimnasioComponent implements OnInit {
     );
   }
 
- 
-
-  agregarEjercicio(rutinaId: number, idEjercicio: number): void {
-    if (!this.ejercicioSeleccionado) {
-      console.error('No se ha seleccionado ningún ejercicio.');
-      return;
-    }
-    this.ejercicioService.agregarEjercicioARutina(rutinaId, idEjercicio).subscribe(
-      () => {
-        console.log('Ejercicio agregado a la rutina correctamente');
-        this.mostrarSelectEjercicios = false;
+  /**
+   * Metodo que obtiene todas las salas de un gimnasio
+   * @param idGimnasio 
+   */
+  obtenerSalas(idGimnasio: number) {
+    this.gimnasioService.obtenerSalasPorGimnasio(idGimnasio).subscribe(
+      (salas: Sala[]) => {
+        this.salas = salas;
       },
-      error => {
-        console.error('Error al agregar ejercicio a la rutina:', error);
+      (error) => {
+        console.log("Error al obtener las salas " + error)
       }
-    );
+    )
+  }
+
+  /**
+   * Metodo que llama a las funciones que obtienen las horas disponibles y la sala
+   * @param idSala 
+   */
+  seleccionarSala(idSala: number) {
+    this.idSalaSeleccionada = idSala;
+    this.obtenerHorasDisponibles(this.idSalaSeleccionada);
+    this.obtenerSala(this.idSalaSeleccionada);
   }
 
 
-  // Método para manejar el evento de clic en el botón "Add" y mostrar u ocultar el select de ejercicios
-  mostrarSelect(): void {
-    this.mostrarSelectEjercicios = !this.mostrarSelectEjercicios;
+  /**
+   * Metodo para eliminar una sala
+   * @param idSala 
+   * @param event 
+   */
+  eliminarSala(idSala: number, event: Event): void {
+    event.stopPropagation(); // Evitar que el clic en el botón de eliminar dispare seleccionarSala
+
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '250px',
+      data: { message: '¿Estás seguro de que deseas eliminar esta sala?' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.salaService.eliminarSalaPorId(idSala).subscribe(
+          () => {
+            Swal.fire('Exito', 'Sala eliminada con exito', 'success');
+            // Actualizar la lista de salas después de la eliminación
+            this.salas = this.salas.filter(sala => sala.idSala !== idSala);
+          },
+          error => {
+            Swal.fire('Error', 'Error al eliminar la sala', 'error');
+          }
+        );
+      }
+    });
   }
+
+  
 
   usuarioRegistradoEnGimnasio(): Observable<boolean> {
     return this.gimnasioService.verGimnasioPorId(this.idGimnasio).pipe(
       map(gimnasio => gimnasio.usuarios.includes(this.user.username))
     );
-    
   }
 
-  obtenerHorasDisponibles(idGimnasio: number){
+  obtenerHorasDisponibles(idGimnasio: number) {
     this.horasDisponiblesService.devolverHorasDisponibles(idGimnasio).subscribe(
-      (horasDisponibles: HorasDisponibles[])=>{
-        this.horasDisponibles=horasDisponibles;
-        console.log(horasDisponibles)
-        console.log(this.horasDisponibles)
+      (horasDisponibles: HorasDisponibles[]) => {
+        this.horasDisponibles = horasDisponibles;
       },
-      (error: any)=>{
-        console.log("Error "+error)
+      (error: any) => {
+        console.log("Error " + error)
       }
     )
   }

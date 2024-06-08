@@ -2,7 +2,7 @@ import { Gimnasio } from "../gimnasio/gimnasio";
 
 export class User {
 
-    id: number;
+  id: number;
     username: string;
     name: string;
     lastname: string;

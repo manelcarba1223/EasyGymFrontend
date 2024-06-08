@@ -3,7 +3,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Gimnasio } from 'src/app/models/gimnasio/gimnasio';
+import { User } from 'src/app/models/user/user';
 import { GimnasioService } from 'src/app/services/gimnasio.service';
+import { LoginService } from 'src/app/services/login.service';
+import { RutinaService } from 'src/app/services/actividad.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-crear-gimnasio',
@@ -11,44 +15,45 @@ import { GimnasioService } from 'src/app/services/gimnasio.service';
   styleUrls: ['./crear-gimnasio.component.css']
 })
 export class CrearGimnasioComponent {
-
   titulo!: string;
   gimnasioForm!: FormGroup;
   action!: string;
-  logoFile: File | null = null; // Variable to store the selected logo file
+  logoFile: File | null = null;
+  user!: User;
 
   constructor(
     public dialogRef: MatDialogRef<CrearGimnasioComponent>,
     private formBuilder: FormBuilder,
     private gimnasioService: GimnasioService,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private route: ActivatedRoute,
-    private router: Router,
+    private loginService: LoginService
   ) {
     this.action = data.action;
     this.titulo = this.action === 'editar' ? 'Editar Gimnasio' : 'Crear Gimnasio';
-    this.initializeForm();
+    this.inicializarFormualrio();
   }
 
   ngOnInit(): void {
     if (this.action === 'editar') {
-      this.setGimnasioDataToForm(this.data.gimnasioId);
+      this.setDatosGimnasio(this.data.gimnasioId);
     }
+    this.user = this.loginService.getUser();
   }
 
-  initializeForm(): void {
+  inicializarFormualrio(): void {
     this.gimnasioForm = this.formBuilder.group({
-      nombre: ['', Validators.required],
-      ciudad: ['', Validators.required],
-      descripcion: ['', Validators.required],
-      logo: [null] // Initialize the logo field with null
-
-      // Remove the 'logo' field from here
+      nombre: ['', [Validators.required, Validators.minLength(1)]],
+      ciudad: ['', [Validators.required, Validators.minLength(3)]],
+      descripcion: ['', ],
+      logo: []
     });
   }
 
-  setGimnasioDataToForm(gimnasioId: number): void {
-    // Obtener los datos del gimnasio a editar y establecerlos en el formulario
+  /**
+   * Metodo que obtiene los datos actuales para editarlos
+   * @param gimnasioId 
+   */
+  setDatosGimnasio(gimnasioId: number): void {
     this.gimnasioService.verGimnasioPorId(gimnasioId).subscribe(
       gimnasio => {
         this.gimnasioForm.patchValue({
@@ -56,12 +61,31 @@ export class CrearGimnasioComponent {
           ciudad: gimnasio.ciudad,
           descripcion: gimnasio.descripcion,
           logo: null
-          // Establecer más campos según sea necesario
         });
       },
       error => {
         console.log(error);
-        alert('Error al obtener los datos del gimnasio');
+        Swal.fire('Error', 'Error al obtener los datos del gimnasio', 'error');
+      }
+    );
+  }
+
+  /**
+   * Metodo que llama al servicio para registrar el usuario en un gimnasio por id
+   * @param gimnasioId 
+   */
+  registrarUsuarioEnGimnasio(gimnasioId: number) {
+    this.gimnasioService.registrarUsuarioEnGimnasio(gimnasioId, this.user.id).subscribe(
+      response => {
+        Swal.fire('Éxito', 'Te has registrado en el gimnasio', 'success').then((result) => {
+          if (result.isConfirmed) {
+            location.reload();
+          }
+        });
+      },
+      error => {
+        Swal.fire('Error', 'Ya estás registrado', 'error');
+        console.error('Error al registrar usuario en el gimnasio:', error);
       }
     );
   }
@@ -71,58 +95,84 @@ export class CrearGimnasioComponent {
       const gimnasioData = this.gimnasioForm.value;
   
       if (this.action === 'crear') {
-        console.log(this.logoFile)
-
         this.gimnasioService.crearGimnasio(gimnasioData).subscribe(
           (response: any) => {
-            console.log(response);
-            alert('Gimnasio creado con éxito');
-            const gimnasioId = response.id; // Obtener el ID del gimnasio creado
+            const gimnasioId = response.id_gimnasio;
+  
+            // Registro el usuario en el gimnasio
+            this.registrarUsuarioEnGimnasio(gimnasioId);
+  
+            // Subo el logo si lo hay
             if (this.logoFile) {
-              this.subirLogo(gimnasioId, this.logoFile); // Subir el logo si está presente
+              this.subirLogo(gimnasioId, this.logoFile);
             } else {
-              this.dialogRef.close(true); // Si no hay logo, cerrar el diálogo
+              this.dialogRef.close(true);
             }
+            Swal.fire('Éxito', 'Gimnasio creado con éxito', 'success').then((result) => {
+              if (result.isConfirmed) {
+                location.reload();
+              }
+            });
           },
           error => {
-            console.log("Error" +error.name);
-            alert('Error al crear el gimnasio');
+            Swal.fire('Error', 'Error al crear el gimnasio!', 'error');
           }
         );
       } else if (this.action === 'editar') {
-        // Obtener el ID del gimnasio a editar
-        const gimnasioId = this.data.gimnasioId; // Asegúrate de proporcionar el ID del gimnasio desde el componente padre
+        const gimnasioId = this.data.gimnasioId;
         this.gimnasioService.editarGimnasio(gimnasioId, gimnasioData).subscribe(
           response => {
-            console.log(response);
-            alert('Gimnasio editado con éxito');
-            this.dialogRef.close(true); // Cerrar el diálogo y enviar true como resultado
+            // Subir el logo si hay
+            if (this.logoFile) {
+              this.subirLogo(gimnasioId, this.logoFile);
+            } else {
+              this.dialogRef.close(true);
+            }
+            Swal.fire('Éxito', 'Gimnasio editado con éxito', 'success').then((result) => {
+              if (result.isConfirmed) {
+                location.reload();
+              }
+            });
           },
           error => {
-            console.log(error);
-            alert('Error al editar el gimnasio');
+            Swal.fire('Error', 'Error al editar el gimnasio', 'error');
           }
         );
       }
+    } else {
+      Swal.fire('Error', 'Formulario no válido. Por favor, revisa los campos.', 'error');
     }
   }
 
-  subirLogo(idGmnasio: number, file: File){
-    this.gimnasioService.cargarLogoGimnasio(idGmnasio, file).subscribe(
-      ()=>{
-        console.log("Logo actualizado")
+  /**
+   * Metodo que llama al servicio para añdir el logo
+   * @param idGimnasio 
+   * @param file 
+   */
+  subirLogo(idGimnasio: number, file: File) {
+    this.gimnasioService.cargarLogoGimnasio(idGimnasio, file).subscribe(
+      response => {
+        Swal.fire('Éxito', 'Gimnasio creado con exito', 'success').then((result) => {
+          if (result.isConfirmed) {
+            location.reload();
+          }
+        });
+        this.dialogRef.close(true);
       },
-      (error)=>{
-        console.log("Error al subir el logo "+error)
+      error => {
+        Swal.fire('Error', 'Error al subir el logo', 'error');
       }
-    )
+    );
   }
 
   cancelar(): void {
-    this.dialogRef.close(false); // Cerrar el diálogo y enviar false como resultado
+    this.dialogRef.close(false);
   }
 
-
+  /**
+   * Metodo que detecta el archivo que se selecciona en el formulario
+   * @param event 
+   */
   onFileSelected(event: any): void {
     const files: FileList = event.target.files;
     if (files.length > 0) {

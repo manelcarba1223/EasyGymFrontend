@@ -1,6 +1,6 @@
 <div class="container">
   <h2>{{titulo}}</h2>
-  <form [formGroup]="gimnasioForm" (ngSubmit)="formSubmit()" enctype="multipart/form-data">    
+  <form [formGroup]="gimnasioForm" (ngSubmit)="formSubmit()" >    
     <div class="form-group">
       <label for="nombre">Nombre:</label>
       <input type="text" class="form-control" formControlName="nombre" id="nombre" placeholder="Nombre del gimnasio">
@@ -16,7 +16,7 @@
     <!-- Agregar etiqueta label para el campo de carga de logo -->
     <div class="form-group">
       <label for="logo">Logo:</label>
-      <input type="file" (change)="onFileSelected($event)" class="form-control" formControlName="logo" id="logo">
+      <input type="file" (change)="onFileSelected($event)" class="form-control">
     </div>
 
     <button type="submit" class="btn btn-primary">Confirmar</button>

@@ -83,3 +83,40 @@ button.mat-raised-button:hover {
   font-size: 14px;
   color: #555;
 }
+
+.search-container {
+  position: relative;
+}
+
+.search-container input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #ccc;
+  border-radius: 20px;
+  outline: none;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.search-container input[type="text"]:focus {
+  border-color: #5cb85c;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: #aaa;
+  cursor: pointer;
+}
+
+.search-icon i {
+  font-size: 20px;
+}
+
+/* Animación para el icono de búsqueda */
+.search-icon:hover {
+  color: #555;
+  transition: color 0.3s ease;
+}

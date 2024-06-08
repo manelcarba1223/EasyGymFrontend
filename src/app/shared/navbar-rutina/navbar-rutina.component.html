@@ -6,18 +6,25 @@
   <span class="title">EasyGym</span>
   <span class="spacer"></span>
   
-  <!-- Botón de Añadir Rutina -->
-  <button mat-icon-button aria-label="Añadir Rutina" class="custom-button" (click)="abrirDialogoCrearRutina()">
-    Crear rutina
-  </button>
+  <div class="actions">
+    <!-- Botón de Añadir Rutina -->
+    <button mat-icon-button aria-label="Añadir Rutina" class="custom-button" (click)="abrirDialogoCrearRutina()" matTooltip="Añadir actividad" *ngIf="rol !== 'ROLE_USER'">
+      <i class="fas fa-plus"></i>
+    </button>
 
-  <!-- Botón de Añadir Disponibilidad -->
-  <button mat-icon-button aria-label="Añadir Disponibilidad" class="custom-button" (click)="abrirDialogoAniadirDisponibilidad()">
-    Añadir disponibilidad
-  </button>
-  
-  <!-- Botón de Volver -->
-  <button mat-icon-button aria-label="Volver" class="custom-button" (click)="volver()">
-    <i class="fas fa-arrow-left"></i>
-  </button>
+    <!-- Botón de Añadir Disponibilidad -->
+    <button mat-icon-button aria-label="Añadir Disponibilidad" class="custom-button" (click)="abrirDialogoAniadirDisponibilidad()" matTooltip="Añadir Disponibilidad" *ngIf="rol === 'ROLE_ADMIN' || rol === 'ROLE_DUEÑO'">
+      <i class="fa-solid fa-calendar-days"></i>    </button>
+    
+    <!-- Botón de Crear Sala -->
+    <button mat-icon-button aria-label="Crear Sala" class="custom-button" (click)="abrirDialogoCrearSala()" matTooltip="Crear Sala" *ngIf="rol === 'ROLE_ADMIN' || rol === 'ROLE_DUEÑO'">
+      <i class="fas fa-plus-square"></i> 
+    </button>
+    
+    <!-- Botón de Volver -->
+    <button mat-icon-button aria-label="Volver" class="custom-button" (click)="volver()" matTooltip="Volver">
+      <i class="fas fa-arrow-left"></i> 
+    </button>
+  </div>
+
 </mat-toolbar>

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/enviroments/enviroments';
 import { Gimnasio } from '../models/gimnasio/gimnasio';
+import { Sala } from '../models/sala/sala/sala.component';
 
 @Injectable({
   providedIn: 'root'
@@ -47,17 +48,19 @@ export class GimnasioService {
     return this.httpClient.post<void>(url, null);
   }
 
-  // Cargar logo de gimnasio
-  cargarLogoGimnasio(id: number, file: File): Observable<void> {
+  cargarLogoGimnasio(id: number, file: File): Observable<string> {
     const formData: FormData = new FormData();
-  formData.append('type', file.type);
-  formData.append('force', file.toString());
-  formData.append('file', file);
-    return this.httpClient.post<void>(`${environment.urlHost}gimnasio/${id}/logo`, file);
+    formData.append('logo', file, file.name);
+
+    return this.httpClient.post(`${environment.urlHost}gimnasio/${id}/logo`, formData, { responseType: 'text' });
   }
 
   // Obtener logo de gimnasio
   obtenerLogoGimnasio(id: number): Observable<any> {
     return this.httpClient.get(`${environment.urlHost}gimnasio/${id}/logo`, { responseType: 'blob' });
+  }
+
+  obtenerSalasPorGimnasio(idGimnasio: number): Observable<Sala[]> {
+    return this.httpClient.get<Sala[]>(`${environment.urlHost}gimnasio/${idGimnasio}/ver-salas`);
   }
 }

@@ -5,7 +5,7 @@
     <div class="container">
     
         <!-- Sección de usuario -->
-        <div class="user-section">
+        <div class="user-section" *ngIf="user">
             <h1 class="section-title">Perfil de Usuario</h1>
             <div class="user-details">
                 <p class="user-info"><strong>Username:</strong> <span>{{ username }}</span></p>
@@ -16,6 +16,7 @@
                 <p class="user-info"><strong>Edad:</strong> <span>{{ getAge() }} años</span></p>
             </div>
         </div>
+        
         <div class="no-gyms-message" *ngIf="gimnasios.length > 0">
             <p>Selecciona un gimnasio </p>
         </div>

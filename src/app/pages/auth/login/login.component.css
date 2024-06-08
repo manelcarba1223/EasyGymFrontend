@@ -1,62 +1,61 @@
 .background-image {
-  background-image: url('/assets/_f915992f-78b5-4b76-9da1-cbe5981269ca.jpeg'); /* Ruta relativa a la ubicación del archivo CSS */
+  background-image: url('/assets/_f915992f-78b5-4b76-9da1-cbe5981269ca.jpeg');
 
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    width: 100%;
-    position: fixed;
-    overflow: hidden;
-  }
-  
-  .container {
-    padding: 20px;
-  }
-  
-  .card {
-    z-index: 1; /* Asegura que .card esté delante de .container pero detrás de la imagen de fondo */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 100%;
+  position: fixed;
+  overflow: hidden;
+}
 
-  }
-  
-  .user-avatar {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .user-avatar img {
-    width: 100px; /* ajusta el tamaño según sea necesario */
-    height: auto;
-  }
-  
-  .example-container {
-    padding: 20px;
-  }
+.container {
+  padding: 20px;
+}
 
-  .bienvenida {
-    text-align: center;
-    background-color: #f0f0f0;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: bold;
-  }
-  
-  mat-form-field {
-    width: 100%;
-    margin-bottom: 20px;
-  }
-  
-  button[type="submit"] {
-    width: 100%;
-  }
-  
-  a {
-    text-decoration: none;
-  }
-  
-  a:hover {
-    text-decoration: underline;
-  }
-  
+.card {
+  z-index: 1;
+
+}
+
+.user-avatar {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.user-avatar img {
+  width: 100px;
+  height: auto;
+}
+
+.example-container {
+  padding: 20px;
+}
+
+.bienvenida {
+  text-align: center;
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+button[type="submit"] {
+  width: 100%;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

@@ -1,37 +1,39 @@
 <app-navbar></app-navbar>
-
 <div class="container">
-    <div class="gimnasios-list" *ngIf="isLoggedOn">
-        <div class="row">
-            <div class="col-md-4">
-                <button mat-raised-button color="primary" (click)="openDialogCrear()">Crear Gimnasio</button>
-            </div>
+  <div class="gimnasios-list" *ngIf="isLoggedOn">
+    <div class="row">
+      <div class="col-md-4">
+        <button mat-raised-button color="primary" (click)="openDialogCrear()" *ngIf="rol === 'ROLE_ADMIN' || rol === 'ROLE_DUEÑO'">Crear Gimnasio</button>
+      </div>
+      <div class="col-md-4">
+        <div class="search-container">
+          <input type="text" [(ngModel)]="filtroBuscar" (input)="filtrarGimnasios()" placeholder="Buscar gimnasio">
+          <span class="search-icon">
+            <i class="fas fa-search"></i>
+          </span>
         </div>
-        <div class="row">
-            <div *ngFor="let gimnasio of gimnasios" class="col-md-4">
-                <div class="gimnasio-item" (click)="handleDoubleClick(gimnasio.id_gimnasio)">
-                    <img class="logo" [src]="logos[gimnasio.id_gimnasio]" alt="Logo del gimnasio">                <div class="details">                    <div class="details">
-                        <h3><strong>{{ gimnasio.nombre }}</strong></h3>
-                        <p><strong>Ciudad:</strong> {{ gimnasio.ciudad }}</p>
-                        <p><strong>Información:</strong> {{ gimnasio.descripcion }}</p>
-                        <!-- Agregar otras propiedades del gimnasio según sea necesario -->
-
-                        <!-- Botón de editar -->
-                        <button mat-button color="primary" (click)="openDialogEditar(gimnasio.id_gimnasio)">
-                            <i class="fa-solid fa-pen-to-square"></i> Editar
-                        </button>
-
-                        <!-- Botón de eliminar -->
-                        <button mat-button color="warn" (click)="eliminarGimnasio(gimnasio.id_gimnasio)">
-                            <i class="fa-solid fa-trash"></i> Eliminar
-                        </button>
-                        <!-- Botón de registrar -->
-                        <button mat-button color="warn" (click)="registrarUsuarioEnGimnasio(gimnasio.id_gimnasio)">
-                            <i class="fa-regular fa-bookmark"></i> Registrar
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+    <div class="row">
+      <div *ngFor="let gimnasio of gimnasiosFiltrados" class="col-lg-4">
+        <div class="gimnasio-item" (click)="handleDoubleClick(gimnasio.id_gimnasio)">
+          <img class="logo" [src]="logos[gimnasio.id_gimnasio]" alt="Logo del gimnasio">
+          <div class="details">
+            <h3><strong>{{ gimnasio.nombre }}</strong></h3>
+            <p><strong>Ciudad:</strong> {{ gimnasio.ciudad }}</p>
+            <p><strong>Información:</strong> {{ gimnasio.descripcion }}</p>
+            <button mat-button color="primary" (click)="openDialogEditar(gimnasio.id_gimnasio)" *ngIf="rol === 'ROLE_ADMIN' || (rol === 'ROLE_DUEÑO' && esDueno[gimnasio.id_gimnasio])">
+              Editar
+            </button>
+            <button mat-button color="warn" (click)="eliminarGimnasio(gimnasio.id_gimnasio)" *ngIf="rol === 'ROLE_ADMIN' || (rol === 'ROLE_DUEÑO' && esDueno[gimnasio.id_gimnasio])">
+              <i class="fa-solid fa-trash"></i> Eliminar
+            </button>
+            <button mat-button color="warn" (click)="registrarUsuarioEnGimnasio(gimnasio.id_gimnasio)" *ngIf="rol !== 'ROLE_DUEÑO'">
+              <i class="fa-regular fa-bookmark"></i> Registrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

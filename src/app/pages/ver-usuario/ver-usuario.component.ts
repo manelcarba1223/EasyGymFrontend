@@ -13,11 +13,13 @@ export class VerUsuarioComponent implements OnInit {
   user!: User;
   username!: string;
   singleClick = false;
-  gimnasios!: Gimnasio[];
+  gimnasios: Gimnasio[];
   constructor(
     private route: ActivatedRoute,
     private userService: UserService, private router: Router
-  ) { }
+  ) { 
+    this.gimnasios=[];
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
